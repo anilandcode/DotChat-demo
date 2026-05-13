@@ -5,10 +5,22 @@ import { parsePdf } from "@/lib/parse-pdf";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
 export async function POST(req: Request) {
+  try {
+    return await ingest(req);
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Upload failed" },
+      { status: 500 },
+    );
+  }
+}
+
+async function ingest(req: Request) {
   const form = await req.formData();
   const file = form.get("file");
 
