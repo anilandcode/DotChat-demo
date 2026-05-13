@@ -1,250 +1,270 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, FileText, MessageCircle, SearchCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import type { ReactNode } from "react";
+import { ArrowRight, Database, FileText, GitCompare, MessageSquareQuote, ScanSearch } from "lucide-react";
 import { UploadZone } from "@/components/upload/upload-zone";
 import { DocumentList } from "@/components/upload/document-list";
 import { ChatWindow } from "@/components/chat/chat-window";
-import { ThemeToggle } from "@/components/theme-toggle";
 
-const steps = [
-  { icon: FileText, title: "Upload", body: "Drop in a PDF and DocChat extracts clean page-level text." },
-  { icon: SearchCheck, title: "Retrieve", body: "DeepSeek embeddings find the most relevant chunks in Supabase pgvector." },
-  { icon: MessageCircle, title: "Answer", body: "Kimi responds with grounded citations back to the exact source." },
+const workflow = [
+  { step: "01", title: "Upload", body: "Extract clean page-level text", color: "var(--accent-secondary)" },
+  { step: "02", title: "Retrieve", body: "Find the most relevant chunks", color: "var(--accent)" },
+  { step: "03", title: "Answer", body: "Generate cited responses", color: "var(--accent-tertiary)" },
+  { step: "04", title: "Compare", body: "Route between model outputs if needed", color: "var(--surface)" },
 ];
 
-const modelCards = [
+const features = [
   {
-    title: "Kimi K2.6",
-    label: "Primary chat",
-    body: "Use Kimi for long-context document reasoning and polished answers that stay grounded in retrieved chunks.",
+    icon: FileText,
+    title: "Document ingestion",
+    body: "PDF uploads become normalized page text and chunk metadata for retrieval.",
+    metric: "10MB / PDF",
   },
   {
-    title: "DeepSeek V4 Pro",
-    label: "Retrieval support",
-    body: "Use DeepSeek for query embeddings, retrieval support, and side-by-side comparison when visitors want to test model behavior.",
+    icon: Database,
+    title: "Vector retrieval",
+    body: "DeepSeek-compatible embeddings are stored and queried through Supabase pgvector.",
+    metric: "5 chunks",
+  },
+  {
+    icon: MessageSquareQuote,
+    title: "Grounded answers",
+    body: "Kimi receives retrieved context and cites factual claims back to source chunks.",
+    metric: "cited by page",
+  },
+  {
+    icon: GitCompare,
+    title: "Model routing",
+    body: "Compare endpoint runs both models over the same retrieved context.",
+    metric: "2 models",
   },
 ];
 
 const costRows = [
-  { option: "Researcher reading docs", cost: "$30/hr", coverage: "Manual, slow follow-up" },
-  { option: "Notion AI seats", cost: "$20/user/mo", coverage: "Tied to one workspace" },
-  { option: "DocChat API demo", cost: "~$5/mo", coverage: "24/7 document answers" },
+  { option: "Researcher reading docs", cost: "$30/hr", coverage: "Manual follow-up" },
+  { option: "Notion AI seats", cost: "$20/user/mo", coverage: "Workspace-bound" },
+  { option: "DocChat API demo", cost: "~$5/mo", coverage: "Document Q&A" },
 ];
+
+function SquareButton({
+  href,
+  children,
+  variant = "dark",
+  external = false,
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: "dark" | "outline";
+  external?: boolean;
+}) {
+  const className =
+    variant === "dark"
+      ? "bg-[var(--black)] text-[var(--surface)] hover:bg-[var(--foreground)]"
+      : "border border-[var(--border-strong)] text-[var(--foreground)] hover:border-[var(--black)] hover:bg-[rgba(0,0,0,0.04)]";
+
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className={`editorial-label inline-flex h-12 items-center justify-between gap-4 px-4 transition-colors duration-150 ${className}`}
+    >
+      {children}
+    </a>
+  );
+}
+
+function SectionHeader({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return (
+    <div className="border-b border-[var(--border)] px-4 py-6 md:px-6 md:py-8">
+      <div className="editorial-label text-[var(--muted)]">{eyebrow}</div>
+      <h2 className="editorial-heading mt-4 max-w-3xl font-serif text-[42px] leading-[0.95] md:text-[60px]">
+        {title}
+      </h2>
+    </div>
+  );
+}
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      <header
-        className="sticky top-0 z-30 border-b border-[var(--border)] backdrop-blur-md"
-        style={{ background: "color-mix(in_srgb,var(--background)_80%,transparent)" }}
-      >
-        <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <a href="/" className="flex shrink-0 items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[var(--accent)]" aria-hidden="true" />
-            <span className="text-[15px] font-semibold">DocChat</span>
-          </a>
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
-            <a href="#demo" className="text-[14px] text-[var(--foreground-2)] transition-colors hover:text-[var(--foreground)]">
-              Demo
+    <div className="min-h-screen bg-[var(--background)] p-2 text-[var(--foreground)] md:p-3">
+      <div className="min-h-[calc(100vh-16px)] border border-[var(--border-strong)] md:min-h-[calc(100vh-24px)]">
+        <header className="sticky top-2 z-30 flex min-h-[72px] items-center border-b border-[var(--border)] bg-[var(--surface)] md:top-3">
+          <div className="grid w-full grid-cols-[1fr_auto] items-center md:grid-cols-[1fr_auto_1fr]">
+            <a href="/" className="flex h-[72px] items-center gap-3 border-r border-[var(--border)] px-4 md:px-6">
+              <span className="h-4 w-4 border border-[var(--black)] bg-[var(--accent)]" aria-hidden="true" />
+              <span className="editorial-label text-[var(--foreground)]">DocChat</span>
             </a>
-            <a href="#how-it-works" className="text-[14px] text-[var(--foreground-2)] transition-colors hover:text-[var(--foreground)]">
-              How it works
-            </a>
-            <a href="/admin" className="text-[14px] text-[var(--foreground-2)] transition-colors hover:text-[var(--foreground)]">
-              Dashboard
-            </a>
-            <a href="/case-study" className="text-[14px] text-[var(--foreground-2)] transition-colors hover:text-[var(--foreground)]">
-              Case study
-            </a>
-          </nav>
-          <div className="flex shrink-0 items-center gap-2">
-            <ThemeToggle />
-            <a
-              href="https://calendly.com/anilpervaiz/15min"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden rounded-full bg-[var(--accent)] px-4 py-2 text-[14px] font-medium text-white transition-colors hover:bg-[var(--accent-hover)] md:inline-flex"
-            >
-              Book a call
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <main>
-        <section className="flex flex-col items-center px-6 pb-20 pt-24 text-center sm:pt-32">
-          <div className="mx-auto flex max-w-3xl flex-col items-center">
-            <div className="mb-8 inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.08em] text-[var(--accent)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden="true" />
-              Kimi chat - DeepSeek retrieval - Supabase pgvector
-            </div>
-            <h1 className="text-[40px] font-semibold leading-[1.05] tracking-[-0.03em] sm:text-[60px]">
-              Chat with PDFs.
-              <br />
-              Get <span className="text-[var(--accent)]">cited answers.</span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-[1.6]" style={{ color: "var(--foreground-2)" }}>
-              DocChat is a production-style RAG demo for teams that need answers from internal documents without guessing.
-            </p>
-            <div className="mt-10 flex flex-wrap justify-center gap-3">
-              <a
-                href="#demo"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
-              >
-                Try the demo <ArrowRight className="h-4 w-4" />
+            <nav className="hidden h-[72px] items-center divide-x divide-[var(--border)] border-r border-[var(--border)] md:flex">
+              <a href="#product" className="editorial-label px-5 text-[var(--muted)] transition-colors duration-150 hover:text-[var(--foreground)]">
+                Product
               </a>
-              <a
-                href="/case-study"
-                className="rounded-full border border-[var(--border-strong)] px-5 py-3 text-[15px] font-medium transition-colors hover:bg-[var(--card)]"
-              >
-                View case study
+              <a href="#workflow" className="editorial-label px-5 text-[var(--muted)] transition-colors duration-150 hover:text-[var(--foreground)]">
+                Workflow
               </a>
-            </div>
-            <div className="mt-6 flex flex-wrap justify-center gap-2">
-              <Badge variant="outline">Next.js 16</Badge>
-              <Badge variant="outline">Kimi K2.6</Badge>
-              <Badge variant="outline">DeepSeek V4 Pro</Badge>
-              <Badge variant="outline">Supabase pgvector</Badge>
+              <a href="#demo" className="editorial-label px-5 text-[var(--muted)] transition-colors duration-150 hover:text-[var(--foreground)]">
+                Demo
+              </a>
+              <a href="/case-study" className="editorial-label px-5 text-[var(--muted)] transition-colors duration-150 hover:text-[var(--foreground)]">
+                Case Study
+              </a>
+            </nav>
+            <div className="flex h-[72px] items-center justify-end px-4 md:px-6">
+              <SquareButton href="https://calendly.com/anilpervaiz/15min" variant="outline" external>
+                Book a call <ArrowRight className="h-4 w-4" />
+              </SquareButton>
             </div>
           </div>
-        </section>
+        </header>
 
-        <section id="how-it-works" className="border-y border-[var(--border)] bg-[var(--surface)] px-6 py-16">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 md:grid-cols-3">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <div key={step.title} className="relative overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--card)] p-6">
-                  <span className="absolute right-6 top-5 text-[40px] font-semibold leading-none text-[var(--foreground-3)] opacity-30">
-                    0{index + 1}
-                  </span>
-                  <Icon className="h-6 w-6 text-[var(--accent)]" />
-                  <h2 className="mt-10 text-[18px] font-semibold">{step.title}</h2>
-                  <p className="mt-2 text-[14px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
-                    {step.body}
-                  </p>
+        <main className="hairline-grid">
+          <section id="product" className="grid min-h-[calc(100vh-96px)] border-b border-[var(--border)] lg:grid-cols-12">
+            <div className="flex flex-col justify-between border-b border-[var(--border)] px-4 py-10 md:px-6 md:py-16 lg:col-span-8 lg:border-b-0 lg:border-r">
+              <div>
+                <div className="editorial-label text-[var(--muted)]">Kimi chat / DeepSeek retrieval / Supabase pgvector</div>
+                <h1 className="editorial-heading mt-10 max-w-[920px] font-serif text-[56px] leading-[0.9] sm:text-[72px] md:text-[96px] lg:text-[112px]">
+                  Chat with PDFs.
+                  <br />
+                  Get <span className="italic">cited</span> answers.
+                </h1>
+              </div>
+              <div className="mt-12 grid gap-3 sm:grid-cols-3">
+                <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
+                  <div className="editorial-label text-[var(--muted)]">Stack</div>
+                  <div className="mt-2 text-[13px]">Next.js 16 / Tailwind v4 / TypeScript</div>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="px-6 py-20 sm:py-24">
-          <div className="mx-auto max-w-6xl">
-            <div className="mb-12 text-center">
-              <span className="mb-3 block text-[12px] uppercase tracking-[0.08em] text-[var(--accent)]">
-                Why two models
-              </span>
-              <h2 className="text-[36px] font-semibold tracking-tight">Model routing is the product story</h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
-                DocChat shows the architecture decision, not just a chatbot wrapper.
-              </p>
+                <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
+                  <div className="editorial-label text-[var(--muted)]">Retrieval</div>
+                  <div className="mt-2 text-[13px]">DeepSeek V4 Pro embeddings</div>
+                </div>
+                <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
+                  <div className="editorial-label text-[var(--muted)]">Answers</div>
+                  <div className="mt-2 text-[13px]">Source-cited chat responses</div>
+                </div>
+              </div>
             </div>
+            <div className="flex flex-col justify-between px-4 py-8 md:px-6 md:py-16 lg:col-span-4">
+              <div className="max-w-md text-[13px] leading-6 text-[var(--muted)]">
+                Upload internal documents, retrieve the right context, and ask grounded questions without guessing.
+              </div>
+              <div className="mt-12 space-y-3">
+                <SquareButton href="#demo">
+                  Try the demo <ArrowRight className="h-4 w-4" />
+                </SquareButton>
+                <SquareButton href="/case-study" variant="outline">
+                  View case study <ArrowRight className="h-4 w-4" />
+                </SquareButton>
+                <div className="editorial-label pt-4 text-[var(--muted)]">
+                  Kimi chat / DeepSeek retrieval / Supabase pgvector
+                </div>
+              </div>
+            </div>
+          </section>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {modelCards.map((item) => (
-                <div key={item.title} className="rounded-[20px] border border-[var(--border)] bg-[var(--card)] p-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="text-[22px] font-semibold tracking-tight">{item.title}</h3>
-                    <Badge variant="secondary">{item.label}</Badge>
-                  </div>
-                  <p className="mt-4 text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
-                    {item.body}
-                  </p>
+          <section id="workflow" className="border-b border-[var(--border)]">
+            <SectionHeader eyebrow="Workflow" title="From uploaded PDF to cited answer." />
+            <div className="grid grid-cols-1 md:grid-cols-4">
+              {workflow.map((step) => (
+                <div key={step.step} className="min-h-[260px] border-b border-r border-[var(--border)] p-4 last:border-r-0 md:border-b-0 md:p-6">
+                  <div className="editorial-label text-[var(--muted)]">{step.step}</div>
+                  <div className="mt-8 h-24 border border-[var(--border)]" style={{ background: step.color }} />
+                  <h3 className="editorial-heading mt-8 font-serif text-[34px] leading-none">{step.title}</h3>
+                  <p className="mt-3 text-[12px] leading-5 text-[var(--muted)]">{step.body}</p>
                 </div>
               ))}
             </div>
+          </section>
 
-            <div className="mt-8 overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--card)]">
-              <div className="border-b border-[var(--border)] bg-[var(--surface)] px-5 py-4">
-                <div className="font-medium">Cost comparison</div>
-                <div className="mt-1 text-sm" style={{ color: "var(--foreground-2)" }}>
-                  The business case is speed and coverage, not novelty.
-                </div>
-              </div>
-              <div className="grid grid-cols-12 gap-3 border-b border-[var(--border)] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-[var(--foreground-3)]">
-                <div className="col-span-5">Option</div>
-                <div className="col-span-3 text-center">Cost</div>
-                <div className="col-span-4 text-right">Coverage</div>
-              </div>
-              {costRows.map((row) => (
-                <div
-                  key={row.option}
-                  className={`grid grid-cols-12 gap-3 border-b border-[var(--border)] px-5 py-4 text-sm last:border-b-0 ${row.option === "DocChat API demo" ? "bg-[var(--accent-soft)] text-[var(--accent)]" : ""}`}
-                >
-                  <div className="col-span-5 font-medium">{row.option}</div>
-                  <div className="col-span-3 text-center font-semibold">{row.cost}</div>
-                  <div className="col-span-4 text-right">{row.coverage}</div>
-                </div>
-              ))}
+          <section className="border-b border-[var(--border)]">
+            <SectionHeader eyebrow="System" title="A lean RAG product, not a chatbot wrapper." />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <article key={feature.title} className="min-h-[300px] border-b border-r border-[var(--border)] bg-[var(--surface)] p-5 last:border-r-0 md:p-6 xl:border-b-0">
+                    <div className="flex items-center justify-between">
+                      <span className="editorial-label text-[var(--muted)]">0{index + 1}</span>
+                      <Icon className="h-5 w-5 text-[var(--foreground)]" />
+                    </div>
+                    <h3 className="editorial-heading mt-16 font-serif text-[34px] leading-none">{feature.title}</h3>
+                    <p className="mt-4 text-[12px] leading-5 text-[var(--muted)]">{feature.body}</p>
+                    <div className="editorial-label mt-10 border-t border-[var(--border)] pt-3 text-[var(--foreground)]">
+                      {feature.metric}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="demo" className="px-6 py-20 sm:py-24">
-          <div className="mx-auto max-w-6xl">
-            <div className="mb-10 text-center">
-              <span className="mb-3 block text-[12px] uppercase tracking-[0.08em] text-[var(--accent)]">
-                Live demo
-              </span>
-              <h2 className="text-[36px] font-semibold tracking-tight">Upload, retrieve, ask</h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
-                The shell is ready now. Connect Supabase and API keys to run the full ingestion and chat flow.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[380px_1fr]">
-              <div className="space-y-5">
+          <section id="demo" className="border-b border-[var(--border)]">
+            <SectionHeader eyebrow="Live demo" title="A square-edged workspace for document questions." />
+            <div className="grid grid-cols-1 gap-0 lg:grid-cols-[360px_1fr]">
+              <div className="space-y-0 border-b border-[var(--border)] lg:border-b-0 lg:border-r">
                 <UploadZone onUploaded={() => setRefreshKey((k) => k + 1)} />
                 <DocumentList refreshKey={refreshKey} />
               </div>
-              <div className="h-[720px] min-h-[640px]">
+              <div className="min-h-[760px] p-3 md:p-4">
                 <ChatWindow />
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section className="border-t border-[var(--border)] px-6 py-16">
-          <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-            <span className="mb-3 block text-[12px] uppercase tracking-[0.08em] text-[var(--accent)]">
-              Built by Anil
-            </span>
-            <h2 className="text-[36px] font-semibold tracking-tight">Want this for your team's docs?</h2>
-            <p className="mt-3 max-w-xl text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
-              I design, build, and automate full-stack AI products for SMBs and agencies.
-            </p>
-            <a
-              href="https://anilpervaiz.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[var(--accent-hover)]"
-            >
-              Back to portfolio <ArrowRight className="h-4 w-4" />
-            </a>
-          </div>
-        </section>
-      </main>
+          <section className="grid border-b border-[var(--border)] lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="border-b border-[var(--border)] px-4 py-10 md:px-6 md:py-14 lg:border-b-0 lg:border-r">
+              <div className="editorial-label text-[var(--muted)]">Business case</div>
+              <h2 className="editorial-heading mt-5 max-w-xl font-serif text-[46px] leading-[0.95] md:text-[72px]">
+                Fast answers with visible sources.
+              </h2>
+              <p className="mt-6 max-w-md text-[13px] leading-6 text-[var(--muted)]">
+                The value is less time searching, fewer unsupported answers, and a clear path from prototype to internal AI workflow.
+              </p>
+            </div>
+            <div className="divide-y divide-[var(--border)]">
+              {costRows.map((row) => (
+                <div key={row.option} className={`grid grid-cols-12 gap-3 px-4 py-6 text-[13px] md:px-6 ${row.option === "DocChat API demo" ? "bg-[var(--black)] text-[var(--surface)]" : "bg-[var(--surface)]"}`}>
+                  <div className="col-span-6">{row.option}</div>
+                  <div className="col-span-3 text-center">{row.cost}</div>
+                  <div className="col-span-3 text-right">{row.coverage}</div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      <footer className="border-t border-[var(--border)] bg-[var(--surface)] px-6 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-[13px] text-[var(--foreground-3)] md:flex-row">
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden="true" />
-            Built by{" "}
-            <a href="https://anilpervaiz.com" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">
-              Anil Pervaiz
-            </a>
+          <section className="grid min-h-[420px] lg:grid-cols-12">
+            <div className="border-b border-[var(--border)] px-4 py-10 md:px-6 md:py-14 lg:col-span-8 lg:border-b-0 lg:border-r">
+              <div className="editorial-label text-[var(--muted)]">Built by Anil</div>
+              <h2 className="editorial-heading mt-5 max-w-4xl font-serif text-[52px] leading-[0.95] md:text-[86px]">
+                Want this for your team's docs?
+              </h2>
+            </div>
+            <div className="flex flex-col justify-between px-4 py-8 md:px-6 md:py-14 lg:col-span-4">
+              <p className="text-[13px] leading-6 text-[var(--muted)]">
+                I design, build, and automate full-stack AI products for SMBs and agencies.
+              </p>
+              <div className="mt-10 space-y-3">
+                <SquareButton href="https://anilpervaiz.com" external>
+                  Back to portfolio <ArrowRight className="h-4 w-4" />
+                </SquareButton>
+                <SquareButton href="/admin" variant="outline">
+                  View dashboard <ScanSearch className="h-4 w-4" />
+                </SquareButton>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer className="flex flex-col justify-between gap-3 border-t border-[var(--border)] px-4 py-5 text-[11px] uppercase tracking-[0.1em] text-[var(--muted)] md:flex-row md:px-6">
+          <div>DocChat / RAG demo / 2026</div>
+          <div className="flex gap-5">
+            <a href="/admin" className="transition-colors duration-150 hover:text-[var(--foreground)]">Dashboard</a>
+            <a href="/case-study" className="transition-colors duration-150 hover:text-[var(--foreground)]">Case study</a>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="/admin" className="transition-colors hover:text-[var(--foreground)]">Dashboard</a>
-            <a href="/case-study" className="transition-colors hover:text-[var(--foreground)]">Case study</a>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }

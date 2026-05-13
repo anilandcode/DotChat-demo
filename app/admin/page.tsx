@@ -24,18 +24,14 @@ function StatCard(props: (typeof stats)[number]) {
   const Icon = props.icon;
 
   return (
-    <Card className="p-5">
+    <Card className="border-[var(--border)] bg-[var(--surface)] p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-xs uppercase tracking-[0.08em]" style={{ color: "var(--foreground-3)" }}>
-            {props.label}
-          </div>
-          <div className="mt-2 text-3xl font-semibold tracking-tight">{props.value}</div>
-          <div className="mt-1 text-xs" style={{ color: "var(--foreground-2)" }}>
-            {props.note}
-          </div>
+          <div className="editorial-label text-[var(--muted)]">{props.label}</div>
+          <div className="mt-4 font-serif text-[44px] leading-none tracking-[-0.05em]">{props.value}</div>
+          <div className="mt-2 text-xs text-[var(--muted)]">{props.note}</div>
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
+        <div className="flex h-10 w-10 items-center justify-center border border-[var(--border-strong)] bg-[var(--accent)] text-[var(--black)]">
           <Icon className="h-5 w-5" />
         </div>
       </div>
@@ -45,68 +41,73 @@ function StatCard(props: (typeof stats)[number]) {
 
 export default function AdminPage() {
   return (
-    <div className="min-h-screen bg-[var(--background)] px-6 py-10 text-[var(--foreground)]">
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <a href="/" className="inline-flex items-center gap-2 text-[13px] text-[var(--foreground-2)] hover:text-[var(--foreground)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden="true" />
-              Back to DocChat
-            </a>
-            <h1 className="mt-6 text-[40px] font-semibold leading-tight tracking-[-0.03em]">Admin dashboard</h1>
-            <p className="mt-2 max-w-xl text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
+    <div className="min-h-screen bg-[var(--background)] p-2 text-[var(--foreground)] md:p-3">
+      <div className="border border-[var(--border-strong)]">
+        <header className="flex min-h-[72px] items-center justify-between border-b border-[var(--border)] px-4 md:px-6">
+          <a href="/" className="editorial-label inline-flex items-center gap-3 text-[var(--foreground)]">
+            <span className="h-4 w-4 border border-[var(--black)] bg-[var(--accent)]" aria-hidden="true" />
+            Back to DocChat
+          </a>
+          <Badge variant="secondary">Aurora Labs</Badge>
+        </header>
+
+        <section className="grid border-b border-[var(--border)] lg:grid-cols-12">
+          <div className="border-b border-[var(--border)] px-4 py-10 md:px-6 md:py-14 lg:col-span-8 lg:border-b-0 lg:border-r">
+            <div className="editorial-label text-[var(--muted)]">Internal console</div>
+            <h1 className="editorial-heading mt-5 font-serif text-[56px] leading-[0.9] md:text-[92px]">
+              Admin dashboard.
+            </h1>
+          </div>
+          <div className="flex items-end px-4 py-8 md:px-6 md:py-14 lg:col-span-4">
+            <p className="text-[13px] leading-6 text-[var(--muted)]">
               Demo analytics for retrieval quality, model latency, and recent document questions.
             </p>
           </div>
-          <Badge variant="secondary">Aurora Labs</Badge>
-        </div>
+        </section>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-1 border-b border-[var(--border)] sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <StatCard key={stat.label} {...stat} />
+            <div key={stat.label} className="border-b border-r border-[var(--border)] last:border-r-0 lg:border-b-0">
+              <StatCard {...stat} />
+            </div>
           ))}
-        </div>
+        </section>
 
-        <Card className="mt-6 p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <Card className="border-0 bg-[var(--surface)] p-0">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] px-4 py-4 md:px-6">
             <div>
-              <div className="font-medium">Recent queries</div>
-              <div className="mt-1 text-xs" style={{ color: "var(--foreground-2)" }}>
-                Placeholder data for the portfolio walkthrough.
-              </div>
+              <div className="editorial-label text-[var(--foreground)]">Recent queries</div>
+              <div className="mt-1 text-xs text-[var(--muted)]">Placeholder data for the portfolio walkthrough.</div>
             </div>
             <Badge variant="outline">demo data</Badge>
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-[16px] border border-[var(--border)]">
-            <div className="grid grid-cols-12 gap-3 bg-[var(--surface)] px-4 py-3 text-xs font-medium uppercase tracking-[0.08em] text-[var(--foreground-3)]">
-              <div className="col-span-6">Query</div>
-              <div className="col-span-2 hidden sm:block">Model</div>
-              <div className="col-span-2 hidden md:block">Source</div>
-              <div className="col-span-3 sm:col-span-2">Status</div>
-              <div className="col-span-3 text-right sm:col-span-2 md:col-span-1">When</div>
-            </div>
-            {rows.map((r) => (
-              <div
-                key={`${r.q}-${r.when}`}
-                className="grid grid-cols-12 items-center gap-3 border-t border-[var(--border)] px-4 py-3 text-sm"
-              >
-                <div className="col-span-6 min-w-0">
-                  <div className="truncate">{r.q}</div>
-                  <div className="mt-1 text-xs sm:hidden" style={{ color: "var(--foreground-3)" }}>
-                    {r.model} - {r.source}
-                  </div>
-                </div>
-                <div className="col-span-2 hidden text-[var(--foreground-2)] sm:block">{r.model}</div>
-                <div className="col-span-2 hidden truncate text-[var(--foreground-2)] md:block">{r.source}</div>
-                <div className="col-span-3 sm:col-span-2">
-                  <Badge variant={r.status === "compared" ? "secondary" : "outline"}>{r.status}</Badge>
-                </div>
-                <div className="col-span-3 text-right text-[var(--foreground-3)] sm:col-span-2 md:col-span-1">
-                  {r.when}
-                </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-[760px]">
+              <div className="grid grid-cols-12 gap-3 border-b border-[var(--border)] bg-[var(--accent-soft)] px-4 py-3 text-xs font-medium uppercase tracking-[0.1em] text-[var(--muted)] md:px-6">
+                <div className="col-span-6">Query</div>
+                <div className="col-span-2">Model</div>
+                <div className="col-span-2">Source</div>
+                <div className="col-span-1">Status</div>
+                <div className="col-span-1 text-right">When</div>
               </div>
-            ))}
+              {rows.map((r) => (
+                <div
+                  key={`${r.q}-${r.when}`}
+                  className="grid grid-cols-12 items-center gap-3 border-b border-[var(--border)] px-4 py-4 text-sm last:border-b-0 md:px-6"
+                >
+                  <div className="col-span-6 min-w-0">
+                    <div className="truncate">{r.q}</div>
+                  </div>
+                  <div className="col-span-2 text-[var(--muted)]">{r.model}</div>
+                  <div className="col-span-2 truncate text-[var(--muted)]">{r.source}</div>
+                  <div className="col-span-1">
+                    <Badge variant={r.status === "compared" ? "secondary" : "outline"}>{r.status}</Badge>
+                  </div>
+                  <div className="col-span-1 text-right text-[var(--muted)]">{r.when}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
       </div>

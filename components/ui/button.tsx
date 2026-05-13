@@ -4,21 +4,21 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button editorial-label inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding whitespace-nowrap transition-all duration-150 outline-none select-none focus-visible:ring-2 focus-visible:ring-[var(--black)] active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "bg-[var(--accent)] text-[var(--accent-fg)] hover:bg-[var(--accent-hover)]",
+          "bg-[var(--black)] text-[var(--surface)] hover:bg-[var(--foreground)]",
         outline:
-          "border-[var(--border)] bg-transparent text-[var(--foreground)] hover:border-[var(--border-strong)] hover:bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)]",
+          "border-[var(--border-strong)] bg-transparent text-[var(--foreground)] hover:border-[var(--black)] hover:bg-[rgba(0,0,0,0.04)]",
         secondary:
-          "bg-[color-mix(in_srgb,var(--foreground)_8%,transparent)] text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--foreground)_12%,transparent)]",
+          "border-[var(--border)] bg-[var(--accent)] text-[var(--black)] hover:bg-[var(--accent-hover)]",
         ghost:
-          "text-[var(--foreground-2)] hover:bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)] hover:text-[var(--foreground)]",
+          "text-[var(--muted)] hover:bg-[rgba(0,0,0,0.04)] hover:text-[var(--foreground)]",
         destructive:
-          "bg-red-500/10 text-red-400 hover:bg-red-500/20",
-        link: "text-[var(--accent)] underline-offset-4 hover:underline",
+          "border-red-700/30 bg-red-100 text-red-900 hover:bg-red-200",
+        link: "text-[var(--foreground)] underline-offset-4 hover:underline",
       },
       size: {
         default:

@@ -5,17 +5,17 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-3 py-1 text-xs font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge editorial-label inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-none border border-transparent px-2.5 py-1 whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-[var(--black)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
-        default: "bg-[var(--accent)] text-[var(--accent-fg)]",
+        default: "border-[var(--black)] bg-[var(--black)] text-[var(--surface)]",
         secondary:
-          "border-[color-mix(in_srgb,var(--accent)_25%,transparent)] bg-[var(--accent-soft)] text-[var(--accent)]",
+          "border-[var(--border)] bg-[var(--accent)] text-[var(--black)]",
         destructive:
-          "border-red-500/20 bg-red-500/10 text-red-400",
+          "border-red-700/30 bg-red-100 text-red-900",
         outline:
-          "border-[var(--border)] bg-[var(--card)] text-[var(--foreground-2)]",
+          "border-[var(--border)] bg-transparent text-[var(--muted)]",
         ghost:
           "text-[var(--foreground-2)] hover:bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)]",
         link: "text-[var(--accent)] underline-offset-4 hover:underline",

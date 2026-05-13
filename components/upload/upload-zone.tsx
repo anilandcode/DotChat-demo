@@ -45,21 +45,24 @@ export function UploadZone({ onUploaded }: Props) {
   }
 
   return (
-    <Card className="p-5">
+    <Card className="border-[var(--border)] bg-[var(--surface)] p-0">
+      <div className="border-b border-[var(--border)] px-4 py-3">
+        <div className="editorial-label text-[var(--muted)]">Upload</div>
+      </div>
       <div
-        className="rounded-[16px] border border-dashed p-6 transition-colors hover:border-[var(--border-strong)]"
+        className="border border-dashed border-transparent p-6 transition-colors duration-150 hover:border-[var(--border-strong)]"
         style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
       >
-        <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "var(--accent-soft)" }}>
-            <Upload className="h-5 w-5" style={{ color: "var(--accent)" }} />
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex h-12 w-12 items-center justify-center border border-[var(--border-strong)] bg-[var(--accent)]">
+            <Upload className="h-5 w-5 text-[var(--black)]" />
           </div>
-          <div className="space-y-1">
-            <div className="text-[15px] font-medium">Drop a PDF here, or click to browse</div>
-            <div className="text-sm" style={{ color: "var(--foreground-2)" }}>
-              Max 10MB.
+          <div className="space-y-2">
+            <div className="font-serif text-[24px] leading-none tracking-[-0.04em]">Drop a PDF</div>
+            <div className="max-w-[260px] text-[12px] leading-5 text-[var(--muted)]">
+              Extract page text, embed chunks, and activate grounded chat. Max 10MB.
             </div>
           </div>
 
@@ -74,18 +77,19 @@ export function UploadZone({ onUploaded }: Props) {
             }}
           />
 
-          <Button type="button" disabled={isBusy} onClick={() => inputRef.current?.click()}>
-            {isBusy ? "Working…" : "Choose file"}
+          <Button type="button" disabled={isBusy} onClick={() => inputRef.current?.click()} className="w-full justify-between">
+            {isBusy ? "Working..." : "Choose file"}
+            <span aria-hidden="true">+</span>
           </Button>
 
           {status ? (
-            <div className="text-xs" style={{ color: isBusy ? "var(--accent)" : "var(--foreground-2)" }}>
+            <div className="editorial-label text-[var(--muted)]" style={{ color: isBusy ? "var(--black)" : "var(--muted)" }}>
               {status}
             </div>
           ) : null}
 
           {error ? (
-            <div className="flex flex-wrap items-center justify-center gap-2 rounded-[14px] border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+            <div className="flex flex-wrap items-center gap-2 border border-red-700/30 bg-red-100 px-3 py-2 text-xs text-red-900">
               <span>{error}</span>
               {lastFile ? (
                 <button className="font-medium underline underline-offset-2" type="button" onClick={() => upload(lastFile)}>

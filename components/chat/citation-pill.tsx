@@ -13,14 +13,14 @@ export function CitationPill(props: {
     <Popover>
       <PopoverTrigger
         type="button"
-        className="rounded-full border px-3 py-1 text-xs font-medium transition-colors hover:border-[var(--accent)]"
+        className="editorial-label rounded-none border px-2.5 py-1 transition-colors duration-150 hover:border-[var(--black)]"
         style={{
           background: "var(--accent-soft)",
-          color: "var(--accent)",
-          borderColor: "color-mix(in_srgb,var(--accent)_20%,var(--border))",
+          color: "var(--foreground)",
+          borderColor: "var(--border)",
         }}
       >
-        {page ? `Page ${page}` : "Source"} - {filename}
+        {page ? `Page ${page}` : "Source"} / {filename}
       </PopoverTrigger>
       <PopoverContent className="w-[min(360px,calc(100vw-32px))]">
         <div className="space-y-2">

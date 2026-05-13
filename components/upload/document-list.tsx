@@ -42,25 +42,25 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
   const empty = useMemo(() => !loading && !error && docs.length === 0, [docs.length, error, loading]);
 
   return (
-    <Card className="p-5">
-      <div className="flex items-center justify-between">
-        <div className="text-[15px] font-medium">Your documents</div>
+    <Card className="border-[var(--border)] bg-[var(--surface)] p-0">
+      <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+        <div className="editorial-label text-[var(--muted)]">Documents</div>
         <Badge variant="secondary">{docs.length}</Badge>
       </div>
 
-      <div className="mt-3 space-y-2">
+      <div className="space-y-0">
         {loading ? (
-          <div className="text-sm" style={{ color: "var(--foreground-2)" }}>
-            Loading…
+          <div className="px-4 py-4 text-sm" style={{ color: "var(--foreground-2)" }}>
+            Loading...
           </div>
         ) : null}
         {error ? (
-          <div className="rounded-[14px] border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          <div className="m-4 border border-red-700/30 bg-red-100 px-3 py-2 text-sm text-red-900">
             {error}
           </div>
         ) : null}
         {empty ? (
-          <div className="text-sm" style={{ color: "var(--foreground-2)" }}>
+          <div className="px-4 py-4 text-sm" style={{ color: "var(--foreground-2)" }}>
             Upload a PDF to begin.
           </div>
         ) : null}
@@ -75,17 +75,17 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
               onClick={() => setActiveDocumentId(d.id)}
             >
               <div
-                className="rounded-[16px] border px-3 py-3 transition hover:border-[var(--border-strong)]"
+                className="border-b border-[var(--border)] px-4 py-4 transition-colors duration-150 hover:bg-[rgba(0,0,0,0.03)]"
                 style={{
-                  borderColor: isActive ? "color-mix(in_srgb,var(--accent)_60%,var(--border))" : "var(--border)",
+                  borderLeft: isActive ? "4px solid var(--black)" : "4px solid transparent",
                   background: isActive ? "var(--accent-soft)" : "var(--surface)",
                 }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">{d.filename}</div>
+                    <div className="truncate text-[13px] font-bold">{d.filename}</div>
                     <div className="mt-0.5 text-xs" style={{ color: "var(--foreground-2)" }}>
-                      {d.pages ? `${d.pages} pages` : "No pages yet"} · {(d.size_bytes / 1024).toFixed(0)} KB
+                      {d.pages ? `${d.pages} pages` : "No pages yet"} - {(d.size_bytes / 1024).toFixed(0)} KB
                     </div>
                   </div>
                   <Badge variant={d.status === "ready" ? "default" : d.status === "error" ? "destructive" : "secondary"}>

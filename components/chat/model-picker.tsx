@@ -10,7 +10,7 @@ export function ModelPicker() {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="hidden text-xs sm:block" style={{ color: "var(--foreground-2)" }}>
+      <div className="editorial-label hidden text-[var(--muted)] sm:block">
         Model
       </div>
       <Select value={model} onValueChange={(v) => setModel(v as ModelChoice)}>
