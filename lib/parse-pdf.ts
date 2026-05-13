@@ -3,28 +3,65 @@ export type ParsedPdf = {
   totalPages: number;
 };
 
-async function ensurePdfRuntime() {
-  const canvas = await import("@napi-rs/canvas");
-  const globals = globalThis as Record<string, unknown>;
+type PdfParseResult = {
+  numpages?: number;
+  text?: string;
+};
 
-  globals.DOMMatrix ??= canvas.DOMMatrix;
-  globals.DOMPoint ??= canvas.DOMPoint;
-  globals.ImageData ??= canvas.ImageData;
-  globals.Path2D ??= canvas.Path2D;
+type PdfPageData = {
+  getTextContent: (options: {
+    normalizeWhitespace: boolean;
+    disableCombineTextItems: boolean;
+  }) => Promise<{ items: Array<{ str?: string; transform?: number[] }> }>;
+};
+
+type PdfParse = (
+  buffer: Buffer,
+  options?: {
+    pagerender?: (pageData: PdfPageData) => Promise<string>;
+  },
+) => Promise<PdfParseResult>;
+
+function renderPage(pageData: PdfPageData) {
+  return pageData
+    .getTextContent({
+      normalizeWhitespace: false,
+      disableCombineTextItems: false,
+    })
+    .then((textContent) => {
+      let lastY: number | undefined;
+      let text = "";
+
+      for (const item of textContent.items) {
+        const y = item.transform?.[5];
+        const value = item.str ?? "";
+        text += lastY === undefined || y === lastY ? value : `\n${value}`;
+        lastY = y;
+      }
+
+      return text.trim();
+    });
 }
 
 export async function parsePdf(buffer: Buffer): Promise<ParsedPdf> {
-  await ensurePdfRuntime();
-  const { PDFParse } = await import("pdf-parse");
-  const parser = new PDFParse({ data: buffer });
-  try {
-    const textResult = await parser.getText();
-    const pages = textResult.pages
-      .map((p) => ({ page: p.num, text: (p.text ?? "").replace(/\r\n/g, "\n").trim() }))
-      .filter((p) => p.text.length > 0);
+  const mod = await import("pdf-parse");
+  const pdfParse = (mod.default ?? mod) as PdfParse;
+  const pages: ParsedPdf["pages"] = [];
 
-    return { pages, totalPages: textResult.total || pages.length || 1 };
-  } finally {
-    await parser.destroy();
-  }
+  const result = await pdfParse(buffer, {
+    pagerender: async (pageData) => {
+      const text = (await renderPage(pageData)).replace(/\r\n/g, "\n").trim();
+      pages.push({ page: pages.length + 1, text });
+      return text;
+    },
+  });
+
+  const cleanPages = pages.filter((p) => p.text.length > 0);
+  if (cleanPages.length) return { pages: cleanPages, totalPages: result.numpages || cleanPages.length };
+
+  const fallback = (result.text ?? "").replace(/\r\n/g, "\n").trim();
+  return {
+    pages: fallback ? [{ page: 1, text: fallback }] : [],
+    totalPages: result.numpages || 1,
+  };
 }
