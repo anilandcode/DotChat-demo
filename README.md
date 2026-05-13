@@ -109,6 +109,7 @@ The seed script expects PDFs in `public/seed-docs/`:
 ## Routes
 
 - `/` - landing page + live upload/chat demo
+- `/case-study` - portfolio-ready project write-up and CTA
 - `/admin` - demo analytics dashboard
 - `/api/ingest` - PDF ingestion pipeline
 - `/api/documents` - document list
