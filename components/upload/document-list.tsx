@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Document } from "@/lib/types";
 import { useDocChatStore } from "@/lib/store";
 
-type ApiResponse = { documents: Document[] };
+type ApiResponse = { documents: Document[]; configured?: boolean; error?: string };
 
 export function DocumentList({ refreshKey }: { refreshKey: number }) {
   const [docs, setDocs] = useState<Document[]>([]);
@@ -23,6 +23,7 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
       .then((r) => r.json())
       .then((json: ApiResponse) => {
         if (cancelled) return;
+        if (json.error) setError(json.error);
         setDocs(json.documents ?? []);
       })
       .catch((e) => {

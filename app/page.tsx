@@ -14,6 +14,25 @@ const steps = [
   { icon: MessageCircle, title: "Answer", body: "Kimi responds with grounded citations back to the exact source." },
 ];
 
+const modelCards = [
+  {
+    title: "Kimi K2.6",
+    label: "Primary chat",
+    body: "Use Kimi for long-context document reasoning and polished answers that stay grounded in retrieved chunks.",
+  },
+  {
+    title: "DeepSeek V4 Pro",
+    label: "Retrieval support",
+    body: "Use DeepSeek for query embeddings, retrieval support, and side-by-side comparison when visitors want to test model behavior.",
+  },
+];
+
+const costRows = [
+  { option: "Researcher reading docs", cost: "$30/hr", coverage: "Manual, slow follow-up" },
+  { option: "Notion AI seats", cost: "$20/user/mo", coverage: "Tied to one workspace" },
+  { option: "DocChat API demo", cost: "~$5/mo", coverage: "24/7 document answers" },
+];
+
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -111,6 +130,58 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        <section className="px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 text-center">
+              <span className="mb-3 block text-[12px] uppercase tracking-[0.08em] text-[var(--accent)]">
+                Why two models
+              </span>
+              <h2 className="text-[36px] font-semibold tracking-tight">Model routing is the product story</h2>
+              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
+                DocChat shows the architecture decision, not just a chatbot wrapper.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {modelCards.map((item) => (
+                <div key={item.title} className="rounded-[20px] border border-[var(--border)] bg-[var(--card)] p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="text-[22px] font-semibold tracking-tight">{item.title}</h3>
+                    <Badge variant="secondary">{item.label}</Badge>
+                  </div>
+                  <p className="mt-4 text-[15px] leading-relaxed" style={{ color: "var(--foreground-2)" }}>
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--card)]">
+              <div className="border-b border-[var(--border)] bg-[var(--surface)] px-5 py-4">
+                <div className="font-medium">Cost comparison</div>
+                <div className="mt-1 text-sm" style={{ color: "var(--foreground-2)" }}>
+                  The business case is speed and coverage, not novelty.
+                </div>
+              </div>
+              <div className="grid grid-cols-12 gap-3 border-b border-[var(--border)] px-5 py-3 text-xs font-medium uppercase tracking-[0.08em] text-[var(--foreground-3)]">
+                <div className="col-span-5">Option</div>
+                <div className="col-span-3 text-center">Cost</div>
+                <div className="col-span-4 text-right">Coverage</div>
+              </div>
+              {costRows.map((row) => (
+                <div
+                  key={row.option}
+                  className={`grid grid-cols-12 gap-3 border-b border-[var(--border)] px-5 py-4 text-sm last:border-b-0 ${row.option === "DocChat API demo" ? "bg-[var(--accent-soft)] text-[var(--accent)]" : ""}`}
+                >
+                  <div className="col-span-5 font-medium">{row.option}</div>
+                  <div className="col-span-3 text-center font-semibold">{row.cost}</div>
+                  <div className="col-span-4 text-right">{row.coverage}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

@@ -13,7 +13,7 @@ export async function GET() {
   })();
 
   if (supabase instanceof Error) {
-    return NextResponse.json({ error: supabase.message }, { status: 500 });
+    return NextResponse.json({ documents: [], configured: false, error: supabase.message });
   }
 
   const { data, error } = await supabase.from("documents").select("*").order("created_at", { ascending: false });
