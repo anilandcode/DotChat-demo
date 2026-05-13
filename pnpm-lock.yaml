@@ -17,6 +17,9 @@ importers:
       '@base-ui/react':
         specifier: ^1.4.1
         version: 1.4.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@napi-rs/canvas':
+        specifier: 0.1.80
+        version: 0.1.80
       '@supabase/supabase-js':
         specifier: ^2.105.3
         version: 2.105.3

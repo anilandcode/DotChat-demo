@@ -11,6 +11,7 @@
     "@ai-sdk/openai-compatible": "^2.0.46",
     "@ai-sdk/react": "^3.0.177",
     "@base-ui/react": "^1.4.1",
+    "@napi-rs/canvas": "0.1.80",
     "@supabase/supabase-js": "^2.105.3",
     "ai": "^6.0.175",
     "class-variance-authority": "^0.7.1",
