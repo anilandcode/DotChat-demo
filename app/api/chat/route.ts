@@ -3,29 +3,20 @@ import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
-  embed,
   streamText,
   type UIMessage,
 } from "ai";
-import { embeddings, getChatModel, type ModelChoice } from "@/lib/providers";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getChatModel, type ModelChoice } from "@/lib/providers";
 import { buildRagSystem } from "@/lib/system-prompt-rag";
+import { retrieveDocumentContext } from "@/lib/retrieval";
 
 export const runtime = "edge";
 
 const BodySchema = z.object({
   messages: z.array(z.unknown()),
   documentId: z.string().min(1),
-  model: z.enum(["kimi", "deepseek"]).default("deepseek"),
+  model: z.enum(["kimi", "deepseek"]).default("kimi"),
 });
-
-type RetrievedChunk = {
-  id: string;
-  document_id: string;
-  page: number | null;
-  content: string;
-  similarity: number;
-};
 
 export async function POST(req: Request) {
   const json = await req.json().catch(() => null);
@@ -47,50 +38,27 @@ export async function POST(req: Request) {
     });
   }
 
-  const embedModelId = process.env.EMBED_MODEL;
-  if (!embedModelId) {
-    return new Response(JSON.stringify({ error: "Missing EMBED_MODEL" }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const supabase = getSupabaseAdmin();
-
-  const { data: docRow } = await supabase
-    .from("documents")
-    .select("id,filename")
-    .eq("id", documentId)
-    .maybeSingle();
-
   const lastUserText = (lastUser.parts ?? [])
     .filter((p) => p.type === "text")
     .map((p) => p.text)
     .join("");
 
-  const { embedding } = await embed({
-    model: embeddings.textEmbeddingModel(embedModelId),
-    value: lastUserText,
-  });
+  const retrieval = await retrieveDocumentContext({
+    documentId,
+    query: lastUserText,
+    matchCount: 5,
+  }).catch((e) => e instanceof Error ? e : new Error("Retrieval failed"));
 
-  const { data: matches, error: matchErr } = await supabase.rpc("match_chunks", {
-    query_embedding: embedding,
-    match_count: 5,
-    doc_id: documentId,
-  });
-
-  if (matchErr) {
-    return new Response(JSON.stringify({ error: matchErr.message }), {
+  if (retrieval instanceof Error) {
+    return new Response(JSON.stringify({ error: retrieval.message }), {
       status: 500,
       headers: { "content-type": "application/json" },
     });
   }
 
-  const retrieved = (matches ?? []) as RetrievedChunk[];
-
   const system = buildRagSystem({
-    docName: docRow?.filename ?? "Uploaded document",
-    chunks: retrieved.map((c) => ({ id: c.id, page: c.page, content: c.content })),
+    docName: retrieval.document.filename,
+    chunks: retrieval.chunks.map((c) => ({ id: c.id, page: c.page, content: c.content })),
   });
 
   const stream = createUIMessageStream({
@@ -98,9 +66,9 @@ export async function POST(req: Request) {
       writer.write({
         type: "data-citations",
         data: {
-          document: { id: documentId, filename: docRow?.filename ?? "Uploaded document" },
+          document: retrieval.document,
           model: model as ModelChoice,
-          chunks: retrieved.map((c) => ({
+          chunks: retrieval.chunks.map((c) => ({
             id: c.id,
             document_id: c.document_id,
             page: c.page,
@@ -124,4 +92,3 @@ export async function POST(req: Request) {
 
   return createUIMessageStreamResponse({ stream });
 }
-

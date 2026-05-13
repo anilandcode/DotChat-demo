@@ -11,22 +11,24 @@ type Props = {
 
 export function UploadZone({ onUploaded }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [lastFile, setLastFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function upload(file: File) {
+    setLastFile(file);
     setError(null);
     setIsBusy(true);
-    setStatus("Uploading…");
+    setStatus("Uploading PDF...");
     try {
       const fd = new FormData();
       fd.set("file", file);
-      setStatus("Parsing PDF…");
+      setStatus("Parsing and embedding...");
       const res = await fetch("/api/ingest", { method: "POST", body: fd });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json?.error ?? "Upload failed");
-      setStatus("Ready");
+      setStatus(`Ready: ${json?.pages ?? "?"} pages, ${json?.chunks ?? "?"} chunks indexed`);
       onUploaded?.();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed");
@@ -43,19 +45,19 @@ export function UploadZone({ onUploaded }: Props) {
   }
 
   return (
-    <Card className="p-4">
+    <Card className="p-5">
       <div
-        className="rounded-md border border-dashed p-6"
-        style={{ borderColor: "var(--border)" }}
+        className="rounded-[16px] border border-dashed p-6 transition-colors hover:border-[var(--border-strong)]"
+        style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
       >
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: "var(--accent-soft)" }}>
+          <div className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "var(--accent-soft)" }}>
             <Upload className="h-5 w-5" style={{ color: "var(--accent)" }} />
           </div>
           <div className="space-y-1">
-            <div className="font-medium">Drop a PDF here, or click to browse</div>
+            <div className="text-[15px] font-medium">Drop a PDF here, or click to browse</div>
             <div className="text-sm" style={{ color: "var(--foreground-2)" }}>
               Max 10MB.
             </div>
@@ -77,17 +79,19 @@ export function UploadZone({ onUploaded }: Props) {
           </Button>
 
           {status ? (
-            <div className="text-xs" style={{ color: "var(--foreground-2)" }}>
+            <div className="text-xs" style={{ color: isBusy ? "var(--accent)" : "var(--foreground-2)" }}>
               {status}
             </div>
           ) : null}
 
           {error ? (
-            <div className="text-xs text-red-600">
-              {error}{" "}
-              <button className="underline" type="button" onClick={() => setError(null)}>
-                dismiss
-              </button>
+            <div className="flex flex-wrap items-center justify-center gap-2 rounded-[14px] border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+              <span>{error}</span>
+              {lastFile ? (
+                <button className="font-medium underline underline-offset-2" type="button" onClick={() => upload(lastFile)}>
+                  Retry
+                </button>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -95,4 +99,3 @@ export function UploadZone({ onUploaded }: Props) {
     </Card>
   );
 }
-

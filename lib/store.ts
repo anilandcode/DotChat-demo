@@ -14,11 +14,10 @@ type StoreState = {
 
 export const useDocChatStore = create<StoreState>((set) => ({
   activeDocumentId: null,
-  model: "deepseek",
+  model: "kimi",
   messages: [],
   setActiveDocumentId: (id) => set({ activeDocumentId: id }),
   setModel: (model) => set({ model }),
   addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
   clearMessages: () => set({ messages: [] }),
 }));
-

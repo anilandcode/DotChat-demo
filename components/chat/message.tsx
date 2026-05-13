@@ -43,14 +43,15 @@ export function ChatMessage(props: {
   return (
     <div className={isUser ? "flex justify-end" : "flex justify-start"}>
       <div
-        className="max-w-[85%] rounded-xl border px-4 py-3"
+        className="max-w-[92%] rounded-2xl border px-4 py-3 sm:max-w-[85%]"
         style={{
           borderColor: "var(--border)",
-          background: isUser ? "color-mix(in_srgb,var(--accent-soft)_65%,transparent)" : "var(--panel)",
+          background: isUser ? "var(--accent)" : "var(--card-elevated)",
+          color: isUser ? "var(--accent-fg)" : "var(--foreground)",
         }}
       >
         <div className="flex items-start justify-between gap-3">
-          <div className="text-sm whitespace-pre-wrap">{display}</div>
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">{display}</div>
           {!isUser && modelUsed ? (
             <Badge variant="secondary" className="shrink-0">
               via {modelUsed === "kimi" ? "Kimi" : "DeepSeek"}
@@ -74,4 +75,3 @@ export function ChatMessage(props: {
     </div>
   );
 }
-

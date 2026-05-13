@@ -10,19 +10,18 @@ export function ModelPicker() {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="text-xs" style={{ color: "var(--foreground-2)" }}>
+      <div className="hidden text-xs sm:block" style={{ color: "var(--foreground-2)" }}>
         Model
       </div>
       <Select value={model} onValueChange={(v) => setModel(v as ModelChoice)}>
-        <SelectTrigger className="min-w-[220px]">
+        <SelectTrigger className="min-w-[180px] sm:min-w-[240px]">
           <SelectValue placeholder="Choose model" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="deepseek">DeepSeek V4 Pro — Fast, grounded answers</SelectItem>
-          <SelectItem value="kimi">Kimi K2.6 — Long context, deeper reasoning</SelectItem>
+          <SelectItem value="kimi">Kimi K2.6 - primary chat</SelectItem>
+          <SelectItem value="deepseek">DeepSeek V4 Pro - compare</SelectItem>
         </SelectContent>
       </Select>
     </div>
   );
 }
-

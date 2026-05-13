@@ -41,9 +41,9 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
   const empty = useMemo(() => !loading && !error && docs.length === 0, [docs.length, error, loading]);
 
   return (
-    <Card className="p-4">
+    <Card className="p-5">
       <div className="flex items-center justify-between">
-        <div className="font-medium">Your documents</div>
+        <div className="text-[15px] font-medium">Your documents</div>
         <Badge variant="secondary">{docs.length}</Badge>
       </div>
 
@@ -53,7 +53,11 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
             Loading…
           </div>
         ) : null}
-        {error ? <div className="text-sm text-red-600">{error}</div> : null}
+        {error ? (
+          <div className="rounded-[14px] border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+            {error}
+          </div>
+        ) : null}
         {empty ? (
           <div className="text-sm" style={{ color: "var(--foreground-2)" }}>
             Upload a PDF to begin.
@@ -70,20 +74,20 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
               onClick={() => setActiveDocumentId(d.id)}
             >
               <div
-                className="rounded-md border px-3 py-2 transition"
+                className="rounded-[16px] border px-3 py-3 transition hover:border-[var(--border-strong)]"
                 style={{
                   borderColor: isActive ? "color-mix(in_srgb,var(--accent)_60%,var(--border))" : "var(--border)",
-                  background: isActive ? "color-mix(in_srgb,var(--accent-soft)_55%,transparent)" : "var(--panel)",
+                  background: isActive ? "var(--accent-soft)" : "var(--surface)",
                 }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium">{d.filename}</div>
                     <div className="mt-0.5 text-xs" style={{ color: "var(--foreground-2)" }}>
-                      {d.pages ? `${d.pages} pages` : "—"} · {(d.size_bytes / 1024).toFixed(0)} KB
+                      {d.pages ? `${d.pages} pages` : "No pages yet"} · {(d.size_bytes / 1024).toFixed(0)} KB
                     </div>
                   </div>
-                  <Badge variant={d.status === "ready" ? "default" : "secondary"}>
+                  <Badge variant={d.status === "ready" ? "default" : d.status === "error" ? "destructive" : "secondary"}>
                     {d.status ?? "unknown"}
                   </Badge>
                 </div>
@@ -95,4 +99,3 @@ export function DocumentList({ refreshKey }: { refreshKey: number }) {
     </Card>
   );
 }
-

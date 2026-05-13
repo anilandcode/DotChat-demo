@@ -28,7 +28,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Only PDF supported in v1" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
+  let supabase: ReturnType<typeof getSupabaseAdmin>;
+  try {
+    supabase = getSupabaseAdmin();
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Supabase is not configured" },
+      { status: 500 },
+    );
+  }
 
   const { data: doc, error: docErr } = await supabase
     .from("documents")
@@ -82,4 +90,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

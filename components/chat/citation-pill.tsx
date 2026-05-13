@@ -13,19 +13,19 @@ export function CitationPill(props: {
     <Popover>
       <PopoverTrigger
         type="button"
-        className="rounded-full border px-3 py-1 text-xs"
+        className="rounded-full border px-3 py-1 text-xs font-medium transition-colors hover:border-[var(--accent)]"
         style={{
           background: "var(--accent-soft)",
-          color: "var(--foreground)",
+          color: "var(--accent)",
           borderColor: "color-mix(in_srgb,var(--accent)_20%,var(--border))",
         }}
       >
-        {page ? `Page ${page}` : "Source"} · {filename}
+        {page ? `Page ${page}` : "Source"} - {filename}
       </PopoverTrigger>
-      <PopoverContent className="w-[360px]">
+      <PopoverContent className="w-[min(360px,calc(100vw-32px))]">
         <div className="space-y-2">
           <div className="text-xs" style={{ color: "var(--foreground-2)" }}>
-            {filename} {page ? `· page ${page}` : ""}
+            {filename} {page ? `- page ${page}` : ""}
           </div>
           <div className="text-sm whitespace-pre-wrap">{snippet}</div>
         </div>
@@ -33,4 +33,3 @@ export function CitationPill(props: {
     </Popover>
   );
 }
-
