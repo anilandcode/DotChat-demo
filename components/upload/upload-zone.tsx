@@ -60,7 +60,7 @@ export function UploadZone({ onUploaded }: Props) {
             <Upload className="h-5 w-5 text-[var(--black)]" />
           </div>
           <div className="space-y-2">
-            <div className="font-serif text-[24px] leading-none">Drop a PDF</div>
+            <div className="font-serif text-[24px] leading-none tracking-[-0.04em]">Drop a PDF</div>
             <div className="max-w-[260px] text-[12px] leading-5 text-[var(--muted)]">
               Extract page text, embed chunks, and activate grounded chat. Max 10MB.
             </div>
@@ -89,11 +89,10 @@ export function UploadZone({ onUploaded }: Props) {
           ) : null}
 
           {error ? (
-            <div className="w-full border border-red-700/30 bg-red-100 px-3 py-3 text-xs text-red-900">
-              <div className="editorial-label text-red-900">Upload failed</div>
-              <div className="mt-2 leading-5">{error}</div>
+            <div className="flex flex-wrap items-center gap-2 border border-red-700/30 bg-red-100 px-3 py-2 text-xs text-red-900">
+              <span>{error}</span>
               {lastFile ? (
-                <button className="editorial-label mt-3 underline underline-offset-2" type="button" onClick={() => upload(lastFile)}>
+                <button className="font-medium underline underline-offset-2" type="button" onClick={() => upload(lastFile)}>
                   Retry
                 </button>
               ) : null}

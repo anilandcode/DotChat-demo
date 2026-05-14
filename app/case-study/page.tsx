@@ -43,15 +43,10 @@ function SquareLink({
   );
 }
 
-function FrameTicks() {
-  return <div className="frame-ticks" aria-hidden="true" />;
-}
-
 export default function CaseStudyPage() {
   return (
-    <main className="min-h-screen bg-[var(--black)] p-2 text-[var(--foreground)] md:p-3">
-      <div className="page-shell square-surface relative border border-[var(--border-strong)]">
-        <FrameTicks />
+    <main className="min-h-screen bg-[var(--background)] p-2 text-[var(--foreground)] md:p-3">
+      <div className="border border-[var(--border-strong)]">
         <header className="flex min-h-[72px] items-center justify-between border-b border-[var(--border)] px-4 md:px-6">
           <a href="/" className="editorial-label inline-flex items-center gap-3 text-[var(--foreground)]">
             <span className="h-4 w-4 border border-[var(--black)] bg-[var(--accent)]" aria-hidden="true" />
@@ -84,7 +79,7 @@ export default function CaseStudyPage() {
         <section className="grid border-b border-[var(--border)] sm:grid-cols-2 lg:grid-cols-4">
           {results.map((result) => (
             <div key={result.value} className="border-b border-r border-[var(--border)] bg-[var(--surface)] p-5 last:border-r-0 lg:border-b-0">
-              <div className="font-serif text-[34px] leading-none">{result.value}</div>
+              <div className="font-serif text-[34px] leading-none tracking-[-0.05em]">{result.value}</div>
               <p className="mt-4 text-[12px] leading-5 text-[var(--muted)]">{result.label}</p>
             </div>
           ))}

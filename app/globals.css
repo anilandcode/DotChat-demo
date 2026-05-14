@@ -65,12 +65,12 @@
 
   html {
     scroll-behavior: smooth;
-    background: var(--black);
+    background: var(--background);
     font-family: var(--font-space-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
   body {
-    background: var(--black);
+    background: var(--background);
     color: var(--foreground);
     font-family: var(--font-space-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     -webkit-font-smoothing: antialiased;
@@ -99,88 +99,13 @@
 
   .editorial-heading {
     font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
-    letter-spacing: 0;
+    letter-spacing: -0.05em;
   }
 
   .hairline-grid {
     background-image:
-      linear-gradient(to right, rgba(0, 0, 0, 0.075) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.055) 1px, transparent 1px);
-    background-size: 25% 100%, 100% 96px;
-    background-position: 6.25% 0, 0 0;
-  }
-
-  .page-shell {
-    position: relative;
-    overflow: hidden;
-    background: var(--surface);
-  }
-
-  .frame-ticks {
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    z-index: 40;
-  }
-
-  .frame-ticks::before,
-  .frame-ticks::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--black), var(--black)),
-      linear-gradient(var(--black), var(--black)),
-      linear-gradient(var(--black), var(--black)),
-      linear-gradient(var(--black), var(--black)),
-      linear-gradient(var(--black), var(--black)),
-      linear-gradient(var(--black), var(--black));
-    background-repeat: no-repeat;
-    background-size: 7px 7px;
-  }
-
-  .frame-ticks::before {
-    background-position:
-      5% 0,
-      36.5% 0,
-      68% 0,
-      95% 0,
-      5% 100%,
-      36.5% 100%;
-  }
-
-  .frame-ticks::after {
-    background-position:
-      68% 100%,
-      95% 100%,
-      0 5%,
-      0 95%,
-      100% 5%,
-      100% 95%;
-  }
-
-  .pixel-block {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--pixel-color, var(--accent));
-  }
-
-  .pixel-block::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 46%;
-    background-image:
-      linear-gradient(90deg, transparent, var(--surface)),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.12) 12px, transparent 12px),
-      linear-gradient(0deg, rgba(255, 255, 255, 0.16) 12px, transparent 12px);
-    background-size: 100% 100%, 24px 24px, 24px 24px;
-    opacity: 0.72;
-  }
-
-  .square-surface,
-  .square-surface * {
-    border-radius: 0 !important;
+      linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+    background-size: 8.333% 100%, 100% 64px;
   }
 }
