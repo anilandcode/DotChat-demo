@@ -51,9 +51,9 @@ function statusLabel(status: string) {
 
 function MetricCell({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-[132px] border-r border-[var(--border)] px-4 py-3 last:border-r-0">
+    <div className="min-w-[140px] border-r border-[var(--border)] px-4 py-4 last:border-r-0">
       <div className="editorial-label text-[var(--muted)]">{label}</div>
-      <div className="mt-1 font-serif text-[26px] leading-none tracking-[-0.04em]">{value}</div>
+      <div className="mt-2 font-serif text-[34px] leading-none">{value}</div>
     </div>
   );
 }
@@ -203,29 +203,29 @@ export function ChatWindow() {
   }
 
   return (
-    <div className="flex h-full min-h-[680px] flex-col overflow-hidden border border-[var(--border)] bg-[var(--surface)]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] px-4 py-4">
+    <div className="flex h-full min-h-[720px] flex-col overflow-hidden border border-[var(--border)] bg-[var(--surface)]">
+      <div className="grid border-b border-[var(--border)] md:grid-cols-[1fr_auto]">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center border border-[var(--border-strong)] bg-[var(--accent)]">
+          <div className="flex h-16 w-16 items-center justify-center border-r border-[var(--border)] bg-[var(--accent)]">
             <FileSearch className="h-5 w-5 text-[var(--black)]" />
           </div>
-          <div>
+          <div className="px-1">
             <div className="editorial-label text-[var(--muted)]">Q4 Research - PDF Workspace</div>
             <div className="mt-1 text-[13px] text-[var(--foreground)]">Kimi chat / DeepSeek retrieval / pgvector context</div>
           </div>
         </div>
-        <div className="editorial-label flex items-center gap-2 text-[var(--foreground)]">
+        <div className="editorial-label flex items-center gap-2 border-t border-[var(--border)] px-4 py-4 text-[var(--foreground)] md:border-l md:border-t-0">
           <span className="h-2 w-2 bg-[var(--accent)]" aria-hidden="true" />
           Active
         </div>
       </div>
 
-      <div className="flex overflow-x-auto border-b border-[var(--border)]">
+      <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[rgba(255,255,255,0.18)]">
         <MetricCell label="Documents" value={activeDocumentId ? "01" : "00"} />
         <MetricCell label="Chunks" value={compare?.chunks.length ? String(compare.chunks.length).padStart(2, "0") : "05"} />
         <MetricCell label="Answers" value={String(messages.filter((m) => m.role === "assistant").length).padStart(2, "0")} />
         <MetricCell label="Citations" value={String(citationCount || compare?.chunks.length || 0).padStart(2, "0")} />
-        <div className="ml-auto flex min-w-[220px] items-center justify-end px-4 py-3">
+        <div className="ml-auto flex min-w-[240px] items-center justify-end border-l border-[var(--border)] px-4 py-3">
           <ModelPicker />
         </div>
       </div>
@@ -246,10 +246,11 @@ export function ChatWindow() {
         </div>
       ) : null}
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[320px_1fr]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[340px_1fr]">
         <aside className="border-b border-[var(--border)] bg-[rgba(255,255,255,0.18)] lg:border-b-0 lg:border-r">
-          <div className="border-b border-[var(--border)] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
             <div className="editorial-label text-[var(--muted)]">Retrieval feed</div>
+            <div className="editorial-label text-[var(--foreground)]">Source</div>
           </div>
           <div className="space-y-3 p-4">
             <div className="border border-[var(--border)] bg-[var(--surface)] p-3">
@@ -297,7 +298,7 @@ export function ChatWindow() {
               <div className="grid h-full place-items-center border border-dashed border-[var(--border)] p-6">
                 <div className="max-w-sm text-center">
                   <div className="editorial-label text-[var(--muted)]">Ready</div>
-                  <div className="mt-3 font-serif text-[36px] leading-none tracking-[-0.05em]">Ask against the document.</div>
+                  <div className="mt-3 font-serif text-[40px] leading-none">Ask against the document.</div>
                   <p className="mt-4 text-[13px] leading-5 text-[var(--muted)]">
                     Answers are generated from retrieved page chunks and include citations when source markers are available.
                   </p>
@@ -358,7 +359,7 @@ export function ChatWindow() {
           ) : null}
 
           <form
-            className="border-t border-[var(--border)]"
+            className="border-t border-[var(--border)] bg-[var(--surface)]"
             onSubmit={(e) => {
               e.preventDefault();
               if (!activeDocumentId) return;
@@ -370,18 +371,18 @@ export function ChatWindow() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto]">
               <input
-                className="h-14 border-0 border-b border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] outline-none placeholder:text-[var(--foreground-3)] focus:ring-2 focus:ring-inset focus:ring-[var(--black)] disabled:opacity-50 sm:border-b-0 sm:border-r"
+                className="h-16 border-0 border-b border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] outline-none placeholder:text-[var(--foreground-3)] focus:ring-2 focus:ring-inset focus:ring-[var(--black)] disabled:opacity-50 sm:border-b-0 sm:border-r"
                 value={input}
                 placeholder={activeDocumentId ? "Ask a question about this document..." : "Select a document first"}
                 onChange={(e) => setInput(e.currentTarget.value)}
                 disabled={disabled}
                 aria-label="Message input"
               />
-              <Button type="button" variant="outline" disabled={disabled || input.trim().length === 0} onClick={() => sendCompare(input)} aria-label="Compare both models" className="h-14 border-x-0 border-y-0 border-b border-[var(--border)] px-4 sm:border-b-0 sm:border-r">
+              <Button type="button" variant="outline" disabled={disabled || input.trim().length === 0} onClick={() => sendCompare(input)} aria-label="Compare both models" className="h-16 border-x-0 border-y-0 border-b border-[var(--border)] px-4 sm:border-b-0 sm:border-r">
                 <Split className="h-4 w-4" />
                 Compare
               </Button>
-              <Button type="submit" disabled={disabled || input.trim().length === 0} aria-label="Send message" className="h-14 px-6">
+              <Button type="submit" disabled={disabled || input.trim().length === 0} aria-label="Send message" className="h-16 px-6">
                 Send
                 <SendHorizontal className="h-4 w-4" />
               </Button>

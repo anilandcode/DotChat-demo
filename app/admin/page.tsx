@@ -28,7 +28,7 @@ function StatCard(props: (typeof stats)[number]) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="editorial-label text-[var(--muted)]">{props.label}</div>
-          <div className="mt-4 font-serif text-[44px] leading-none tracking-[-0.05em]">{props.value}</div>
+          <div className="mt-4 font-serif text-[44px] leading-none">{props.value}</div>
           <div className="mt-2 text-xs text-[var(--muted)]">{props.note}</div>
         </div>
         <div className="flex h-10 w-10 items-center justify-center border border-[var(--border-strong)] bg-[var(--accent)] text-[var(--black)]">
@@ -39,10 +39,15 @@ function StatCard(props: (typeof stats)[number]) {
   );
 }
 
+function FrameTicks() {
+  return <div className="frame-ticks" aria-hidden="true" />;
+}
+
 export default function AdminPage() {
   return (
-    <div className="min-h-screen bg-[var(--background)] p-2 text-[var(--foreground)] md:p-3">
-      <div className="border border-[var(--border-strong)]">
+    <div className="min-h-screen bg-[var(--black)] p-2 text-[var(--foreground)] md:p-3">
+      <div className="page-shell square-surface relative border border-[var(--border-strong)]">
+        <FrameTicks />
         <header className="flex min-h-[72px] items-center justify-between border-b border-[var(--border)] px-4 md:px-6">
           <a href="/" className="editorial-label inline-flex items-center gap-3 text-[var(--foreground)]">
             <span className="h-4 w-4 border border-[var(--black)] bg-[var(--accent)]" aria-hidden="true" />
