@@ -16,6 +16,14 @@ function extractChunkIds(text: string) {
   return Array.from(new Set(out));
 }
 
+/* Map a retrieval-confidence score (best chunk similarity, 0..1) to a graded,
+   color-coded state — the trust/uncertainty UI pattern. */
+function confidenceMeta(c: number): { level: "high" | "medium" | "low"; color: string; label: string } {
+  if (c >= 0.7) return { level: "high", color: "#15803d", label: "High confidence" };
+  if (c >= 0.5) return { level: "medium", color: "#b45309", label: "Medium confidence" };
+  return { level: "low", color: "#b91c1c", label: "Low confidence" };
+}
+
 export function ChatMessage(props: {
   role: "user" | "assistant";
   text: string;
@@ -24,6 +32,7 @@ export function ChatMessage(props: {
 }) {
   const { role, text, modelUsed, citations } = props;
   const isUser = role === "user";
+  const conf = !isUser && citations ? confidenceMeta(citations.confidence) : null;
 
   const display = isUser ? text : stripMarkers(text);
   const chunkIds = isUser ? [] : extractChunkIds(text);
@@ -52,10 +61,24 @@ export function ChatMessage(props: {
       >
         <div className="flex items-start justify-between gap-3">
           <div className="text-[13px] leading-relaxed whitespace-pre-wrap">{display}</div>
-          {!isUser && modelUsed ? (
-            <Badge variant="secondary" className="shrink-0">
-              via {modelUsed === "kimi" ? "Kimi" : "DeepSeek"}
-            </Badge>
+          {!isUser && (modelUsed || conf) ? (
+            <div className="flex shrink-0 flex-col items-end gap-1.5">
+              {modelUsed ? (
+                <Badge variant="secondary">
+                  via {modelUsed === "kimi" ? "Kimi" : "DeepSeek"}
+                </Badge>
+              ) : null}
+              {conf ? (
+                <span
+                  className="editorial-label inline-flex items-center gap-1.5"
+                  style={{ color: conf.color }}
+                  title={`Top retrieval similarity ${citations!.confidence}`}
+                >
+                  <span className="h-2 w-2 rounded-full" style={{ background: conf.color }} aria-hidden="true" />
+                  {conf.label}
+                </span>
+              ) : null}
+            </div>
           ) : null}
         </div>
 
@@ -69,6 +92,17 @@ export function ChatMessage(props: {
                 snippet={p.snippet}
               />
             ))}
+          </div>
+        ) : null}
+
+        {!isUser && conf && conf.level !== "high" ? (
+          <div
+            className="mt-3 border px-3 py-2 text-[12px] leading-5"
+            style={{ borderColor: conf.color, color: conf.color, background: "rgba(0,0,0,0.02)" }}
+          >
+            {conf.level === "low"
+              ? "Low retrieval confidence — the document may not cover this. Verify the cited pages or rephrase."
+              : "Medium confidence — double-check the answer against the cited pages."}
           </div>
         ) : null}
       </div>

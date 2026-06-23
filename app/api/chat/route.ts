@@ -61,6 +61,12 @@ export async function POST(req: Request) {
     chunks: retrieval.chunks.map((c) => ({ id: c.id, page: c.page, content: c.content })),
   });
 
+  // Retrieval confidence = best chunk similarity. Surfaced in the UI so a weak
+  // match is shown as "low confidence" rather than answered with false certainty.
+  const confidence = retrieval.chunks.length
+    ? Math.max(...retrieval.chunks.map((c) => c.similarity ?? 0))
+    : 0;
+
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
       writer.write({
@@ -68,6 +74,7 @@ export async function POST(req: Request) {
         data: {
           document: retrieval.document,
           model: model as ModelChoice,
+          confidence: Number(confidence.toFixed(3)),
           chunks: retrieval.chunks.map((c) => ({
             id: c.id,
             document_id: c.document_id,

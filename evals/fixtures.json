@@ -1,0 +1,30 @@
+[
+  {
+    "id": "dc-01",
+    "question": "What is the refund window?",
+    "context": ["Refunds are accepted within 30 days of purchase."],
+    "answer": "Refunds are accepted within 30 days.",
+    "grounded": true
+  },
+  {
+    "id": "dc-02",
+    "question": "Who signed the contract?",
+    "context": ["This agreement is between Acme and a vendor."],
+    "answer": "The contract was signed by John Smith on March 3.",
+    "grounded": false
+  },
+  {
+    "id": "dc-03",
+    "question": "What is the support SLA?",
+    "context": ["The support SLA is 24 hours for priority tickets."],
+    "answer": "The SLA is 24 hours for priority tickets.",
+    "grounded": true
+  },
+  {
+    "id": "dc-04",
+    "question": "What are the payment terms?",
+    "context": ["Invoices are due net-30 days after receipt."],
+    "answer": "Invoices are due net-30, about 30 days after receipt.",
+    "grounded": true
+  }
+]

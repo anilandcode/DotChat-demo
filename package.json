@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "evals": "node evals/groundedness.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.46",
